@@ -26,7 +26,7 @@ app.controller('mainCtrl', function($scope, itunesService){
 
   //First inject itunesService into your controller.
 
-    //done above?
+    //done above
 
 
   //Now write a function that will call the method on the itunesService that is responsible for getting the data from iTunes, 
@@ -36,11 +36,12 @@ app.controller('mainCtrl', function($scope, itunesService){
   //Also note that that method should be returning a promise, so you could use .then in this function.
     
     $scope.getSongData = function() {
-        $scope.artist = $scope.artist.split(" ").join("");
-        itunesService.getSongs($scope.artist).then(function(response){
-           $scope.songData = parseSongs(); 
-        });
+        $scope.artist = itunesService.getSongs()
+            .then(function(artist){
+                $scope.songData = artist; 
+            });
     }
+    $scope.getSongData();
 
   //Check that the above method is working by entering a name into the input field on your web app, and then console.log the result
 
@@ -61,13 +62,13 @@ app.controller('mainCtrl', function($scope, itunesService){
   //the iTunes API is going to give you a lot more details than ng-grid wants. Create a new array and then loop through the iTunes 
   //data pushing into your new array objects that look like the above data.
 
-    var parseSongs = function(songs) {
-        var newArray = [];
-        for(var i = 0; i < songs.length; i++) {
+//     var parseSongs = function(songs) {
+//         var newArray = [];
+//         for(var i = 0; i < songs.length; i++) {
             
-        }
-        return parseSongs;
-  };
+//         }
+//         return parseSongs;
+//   };
     
     
 
