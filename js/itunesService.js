@@ -2,22 +2,34 @@ var app = angular.module('itunes');
 
 app.service('itunesService', function($http, $q){
   //This service is what will do the 'heavy lifting' and get our data from the iTunes API.
-  //Also note that we're using a 'service' and not a 'factory' so all your methods you want to call in your 
+  //Also note that we're using a 'service' and not a 'factory' so all your methods you want to call in your
   //controller need to be on 'this'.
 
-  //Write a method that accepts an artist's name as the parameter, then makes a 'JSONP' http request to a url 
+  //Write a method that accepts an artist's name as the parameter, then makes a 'JSONP' http request to a url
   //that looks like this https://itunes.apple.com/search?term=' + artist + '&callback=JSON_CALLBACK'
-  //Note that in the above line, artist is the parameter being passed in. 
+  //Note that in the above line, artist is the parameter being passed in.
   //You can return the http request or you can make your own promise in order to manipulate the data before you resolve it.
 
-    this.getSongs = function(artist) {
+    this.getArtist = function(artist) {
         var deferred = $q.defer();
          $http({
             method: 'JSONP',
             url: 'https://itunes.apple.com/search?term=' + artist + '&callback=JSON_CALLBACK'
-        }).then(function(response){ 
-            var parsedResponse = response.data.data;
-            deferred.resolve(parsedResponse)
+        }).then(function(response){
+            var parsedResponse = response.data.results;
+            var parsedData = [];
+            for(var i = 0; i < parsedResponse.length; i++) {
+              var responseObj = {};
+              responseObj.Play = parsedResponse[i].previewUrl;
+              responseObj.Artist = parsedResponse[i].artistName;
+              responseObj.Collection = parsedResponse[i].collectionCensoredName;
+              responseObj.AlbumArt = parsedResponse[i].artworkUrl100;
+              responseObj.Type = parsedResponse[i].kind;
+              responseObj.CollectionPrice = parsedResponse[i].trackPrice;
+              parsedData.push(responseObj);
+            }
+            console.log(parsedData);
+            deferred.resolve(parsedData);
        })
      return deferred.promise;
     }
